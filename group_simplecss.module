@@ -2,9 +2,7 @@
 
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupContent;
 
 /**
  * Implements hook_entity_base_field_info().
@@ -40,21 +38,35 @@ function group_simplecss_entity_base_field_info(EntityTypeInterface $entity_type
  */
 function group_simplecss_page_attachments(array &$attachments) {
 
-  $attachments['#attached']['html_head'][] = [
-    [
-      '#type' => 'html_tag',
-      '#tag' => 'style',
-      '#value' => 'a {color:blue}',
-    ],
-    // A key, to make it possible to recognize this HTML  element when altering.
-    'group_simplecss',
-  ];
+  // If we're on a Group entity page.
+  $group_route_context = \Drupal::service('group.group_route_context');
+  $contexts = $group_route_context->getRuntimeContexts(['group']);
+  $group = $contexts['group']->getContextValue();
 
-  // @todo Can't do the following until https://www.drupal.org/node/2391025
+  // If we're on a Node entity page.
+  $node = \Drupal::request()->attributes->get('node');
+  if ($node) {
+    $group_content_array = GroupContent::loadByEntity($node);
+    foreach ($group_content_array as $group_content) {
+      $group = $group_content->getGroup();
+    }
+  }
 
-//  $attachments['#attached']['css'][] = array(
-//    'data' => 'ol {color:purple}',
-//    'scope' => 'header',
-//    'type' => 'inline',
-//  );
+  if (isset($group) && $group_css = $group->get('group_simplecss')->getValue()[0]['value']) {
+    $attachments['#attached']['html_head'][] = [
+      [
+        '#type' => 'html_tag',
+        '#tag' => 'style',
+        '#value' => $group_css,
+      ],
+      'group_simplecss',
+    ];
+
+    // @todo Can't do the following until https://www.drupal.org/node/2391025
+    //  $attachments['#attached']['css'][] = array(
+    //    'data' => $group_css,
+    //    'scope' => 'header',
+    //    'type' => 'inline',
+    //  );
+  }
 }
