@@ -1,0 +1,11 @@
+<?php
+
+/**
+ * Implements hook_install().
+ */
+function group_simplecss_install() {
+  // Create field storage for the 'group_simplecss' base field without having to run update.php.
+  $entity_manager = \Drupal::entityManager();
+  $definition = $entity_manager->getFieldStorageDefinitions('group')['group_simplecss'];
+  $entity_manager->onFieldStorageDefinitionCreate($definition);
+}

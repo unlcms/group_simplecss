@@ -1,0 +1,60 @@
+<?php
+
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\group\Entity\Group;
+
+/**
+ * Implements hook_entity_base_field_info().
+ */
+function group_simplecss_entity_base_field_info(EntityTypeInterface $entity_type) {
+  if ($entity_type->id() === 'group') {
+    $fields['group_simplecss'] = BaseFieldDefinition::create('string_long')
+      ->setLabel(t('CSS'))
+      ->setDescription(t('Will be added to any page containing this Group\'s content.'))
+      ->setRevisionable(TRUE)
+      ->setTranslatable(FALSE)
+      ->setDisplayOptions('view', [
+        'label' => 'hidden',
+        'type' => 'hidden',
+        'weight' => 50,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'string_textarea',
+        'weight' => 50,
+        'settings' => array(
+          'rows' => 20,
+        ),
+      ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', FALSE);
+
+    return $fields;
+  }
+}
+
+/**
+ * Implements hook_page_attachments().
+ */
+function group_simplecss_page_attachments(array &$attachments) {
+
+  $attachments['#attached']['html_head'][] = [
+    [
+      '#type' => 'html_tag',
+      '#tag' => 'style',
+      '#value' => 'a {color:blue}',
+    ],
+    // A key, to make it possible to recognize this HTML  element when altering.
+    'group_simplecss',
+  ];
+
+  // @todo Can't do the following until https://www.drupal.org/node/2391025
+
+//  $attachments['#attached']['css'][] = array(
+//    'data' => 'ol {color:purple}',
+//    'scope' => 'header',
+//    'type' => 'inline',
+//  );
+}

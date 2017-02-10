@@ -1,0 +1,9 @@
+name: 'Group Simple CSS'
+type: 'module'
+description: 'Add CSS to a Group.'
+core: '8.x'
+package: 'Group'
+
+dependencies:
+  - 'field'
+  - 'group'
