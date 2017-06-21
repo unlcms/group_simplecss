@@ -52,7 +52,7 @@ function group_simplecss_page_attachments(array &$attachments) {
     }
   }
 
-  if (isset($group) && $group_css = $group->get('group_simplecss')->getValue()[0]['value']) {
+  if (isset($group) && isset($group->get('group_simplecss')->getValue()[0]) && $group_css = $group->get('group_simplecss')->getValue()[0]['value']) {
     $attachments['#attached']['html_head'][] = [
       [
         '#type' => 'html_tag',
