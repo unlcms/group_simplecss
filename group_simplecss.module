@@ -3,6 +3,7 @@
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\group\Entity\GroupContent;
+use Drupal\node\Entity\Node;
 
 /**
  * Implements hook_entity_base_field_info().
@@ -46,6 +47,9 @@ function group_simplecss_page_attachments(array &$attachments) {
   // If we're on a Node entity page.
   $node = \Drupal::request()->attributes->get('node');
   if ($node) {
+    if (is_numeric($node)) {
+      $node = Node::load($node);
+    }
     $group_content_array = GroupContent::loadByEntity($node);
     foreach ($group_content_array as $group_content) {
       $group = $group_content->getGroup();
